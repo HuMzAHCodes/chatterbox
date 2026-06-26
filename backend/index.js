@@ -42,10 +42,16 @@ app.use((req, res) => {
 
 // ── Start Server ──────────────────────────────────────────────────────────────
 
+
+
 const PORT = process.env.PORT || 5000;
 
-server.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(PORT, () => {
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  });
+}
 
-export default app;  // needed for tests later
+
+
+export default app;  
