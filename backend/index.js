@@ -1,18 +1,23 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+
+
+
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
+
 import connectDB from './src/config/db.js';
 
 
 
 // Connect to MongoDB
 connectDB();
-// Load env variables first — before anything else
-dotenv.config();
+
 
 // Route imports
 import testRouter from './src/routes/test.js';
