@@ -27,17 +27,22 @@ PORT=5000
 NODE_ENV=development
 
 # ── Database ───────────────────────────────────────────
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/chatterbox_dev?retryWrites=true&w=majority
-MONGO_URI_TEST=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/chatterbox_test?retryWrites=true&w=majority
+# NOTE: Uses direct shard addresses — NOT mongodb+srv
+# Reason: ISP blocks SRV DNS lookups on this machine
+# See MONGODB_CONNECTION_GUIDE.md for full explanation
+
+MONGO_URI=mongodb://acoding84_db_user:YOUR_PASSWORD@ac-wmvhmmv-shard-00-00.lpcvjp7.mongodb.net:27017,ac-wmvhmmv-shard-00-01.lpcvjp7.mongodb.net:27017,ac-wmvhmmv-shard-00-02.lpcvjp7.mongodb.net:27017/chatterbox_dev?ssl=true&replicaSet=atlas-rtado6-shard-0&authSource=admin&retryWrites=true&w=majority
+
+MONGO_URI_TEST=mongodb://acoding84_db_user:YOUR_PASSWORD@ac-wmvhmmv-shard-00-00.lpcvjp7.mongodb.net:27017,ac-wmvhmmv-shard-00-01.lpcvjp7.mongodb.net:27017,ac-wmvhmmv-shard-00-02.lpcvjp7.mongodb.net:27017/chatterbox_test?ssl=true&replicaSet=atlas-rtado6-shard-0&authSource=admin&retryWrites=true&w=majority
 
 # ── Auth ───────────────────────────────────────────────
-JWT_SECRET=replace_this_with_a_long_random_string_min_32_chars
+JWT_SECRET=
 JWT_EXPIRE=7d
 
 # ── Cloudinary ─────────────────────────────────────────
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 
 # ── CORS ───────────────────────────────────────────────
 CLIENT_URL=http://localhost:3000
@@ -51,8 +56,8 @@ CLIENT_URL=http://localhost:3000
 |----------|------|----------|---------|-------------|
 | `PORT` | Number | Yes | `index.js` | Port the Express server listens on. Default 5000. |
 | `NODE_ENV` | String | Yes | `index.js`, `errorHandler.js` | `development`, `test`, or `production`. Controls error detail level. |
-| `MONGO_URI` | String | Yes | `src/config/db.js` | MongoDB Atlas connection string for the dev database. |
-| `MONGO_URI_TEST` | String | Yes | `src/__tests__/setup.js` | MongoDB Atlas connection string for the test database. Never the same as MONGO_URI. |
+| `MONGO_URI` | String | Yes | `src/config/db.js` | Direct shard connection string. NOT mongodb+srv — ISP blocks SRV DNS. See MONGODB_CONNECTION_GUIDE.md |
+| `MONGO_URI_TEST` | String | Yes | `src/__tests__/db.test.js` | Same format as MONGO_URI but points to chatterbox_test DB. Must be updated together with MONGO_URI |
 | `JWT_SECRET` | String | Yes | `src/middleware/protect.js`, `src/controllers/authController.js` | Secret key for signing and verifying JWTs. Min 32 random characters. |
 | `JWT_EXPIRE` | String | Yes | `src/controllers/authController.js` | JWT expiry duration. Format: `7d`, `24h`, `60m`. Currently set to `7d`. |
 | `CLOUDINARY_CLOUD_NAME` | String | Yes (Day 6+) | `src/config/cloudinary.js` | Your Cloudinary account cloud name. Found in Cloudinary dashboard. |

@@ -27,9 +27,17 @@ Copy the output and paste it into the "Current Tree" section below. Takes 30 sec
 ## Last Updated
 
 ```
-Day:  1
+Day:  3
 Date: [ fill in today's date ]
-What changed: Initial setup — folder structure created, no files yet
+What changed: Day 1 + Day 2 complete.
+              Day 1: index.js, .env, .env.example, .gitignore,
+                     package.json, routes/test.js, __tests__/setup.js,
+                     __tests__/health.test.js created.
+              Day 2: config/db.js, models/User.js, models/Room.js,
+                     models/Message.js, __tests__/db.test.js created.
+              Connection uses direct shard addresses — NOT mongodb+srv.
+              Reason: ISP blocks SRV DNS on this machine.
+              See MONGODB_CONNECTION_GUIDE.md for full details.
 ```
 
 ---
@@ -40,14 +48,14 @@ What changed: Initial setup — folder structure created, no files yet
 
 ```
 backend/
-├── index.js                          [ ] not created yet
-├── .env                              [ ] not created yet
-├── .env.example                      [ ] not created yet
-├── .gitignore                        [ ] not created yet
-├── package.json                      [ ] not created yet
+├── index.js                          [x]
+├── .env                              [x]
+├── .env.example                      [x]
+├── .gitignore                        [x]
+├── package.json                      [x]
 └── src/
     ├── config/
-    │   ├── db.js                     [ ] Day 2
+    │   ├── db.js                     [x]
     │   └── cloudinary.js             [ ] Day 6
     ├── controllers/
     │   ├── authController.js         [ ] Day 3
@@ -58,11 +66,11 @@ backend/
     │   ├── errorHandler.js           [ ] Day 3
     │   └── upload.js                 [ ] Day 6
     ├── models/
-    │   ├── User.js                   [ ] Day 2
-    │   ├── Room.js                   [ ] Day 2
-    │   └── Message.js                [ ] Day 2
+    │   ├── User.js                   [x]
+    │   ├── Room.js                   [x]
+    │   └── Message.js                [x]
     ├── routes/
-    │   ├── test.js                   [ ] Day 1
+    │   ├── test.js                   [x]
     │   ├── auth.js                   [ ] Day 3
     │   ├── rooms.js                  [ ] Day 4
     │   ├── messages.js               [ ] Day 4
@@ -76,8 +84,9 @@ backend/
     │   ├── AppError.js               [ ] Day 3
     │   └── asyncHandler.js           [ ] Day 3
     └── __tests__/
-        ├── setup.js                  [ ] Day 1
-        ├── db.test.js                [ ] Day 2
+        ├── setup.js                  [x]
+        ├── health.test.js            [x] ← added Day 1 (not in original plan)
+        ├── db.test.js                [x]
         ├── auth.test.js              [ ] Day 3
         ├── rooms.test.js             [ ] Day 4
         ├── messages.test.js          [ ] Day 4
@@ -117,7 +126,7 @@ frontend/                             [ ] starts Day 7
 | File | Single responsibility |
 |------|-----------------------|
 | `index.js` | Entry point — creates Express app, HTTP server, registers all middleware and routes |
-| `src/config/db.js` | Connects Mongoose to MongoDB Atlas |
+| `src/config/db.js` | Connects Mongoose to MongoDB Atlas using direct shard addresses (not SRV) |
 | `src/config/cloudinary.js` | Configures Cloudinary SDK with credentials |
 | `src/controllers/authController.js` | Handles register, login, getMe logic |
 | `src/controllers/roomController.js` | Handles createRoom, getRooms, getRoomById logic |
@@ -138,8 +147,9 @@ frontend/                             [ ] starts Day 7
 | `src/socket/handlers/roomHandler.js` | join-room, leave-room socket events |
 | `src/utils/AppError.js` | Custom error class with statusCode and message |
 | `src/utils/asyncHandler.js` | Wraps async controller functions, passes errors to next() |
-| `src/__tests__/setup.js` | Connects to test DB before all tests, disconnects after |
-| `src/__tests__/db.test.js` | Tests Mongoose model CRUD operations |
+| `src/__tests__/setup.js` | Global Jest timeout config (jest.setTimeout) |
+| `src/__tests__/health.test.js` | Tests GET /api/health → 200, unknown routes → 404 |
+| `src/__tests__/db.test.js` | Tests all 3 Mongoose models — CRUD, validation, populate, sort |
 | `src/__tests__/auth.test.js` | Tests auth endpoints (register, login, protect middleware) |
 | `src/__tests__/rooms.test.js` | Tests room CRUD endpoints |
 | `src/__tests__/messages.test.js` | Tests message fetch and pagination |
@@ -200,7 +210,7 @@ import errorHandler from './src/middleware/errorHandler.js';
 
 // From a test file
 import request from 'supertest';
-import app from '../index.js';   // ← make sure index.js exports the app
+import app from '../../index.js';   // ← note: two levels up from __tests__/
 ```
 
 ---
@@ -221,4 +231,19 @@ import app from '../index.js';   // ← make sure index.js exports the app
 
 ---
 
-*Last updated: Day 1. Run the tree command and paste the output every time you add or move a file. This is the most important file for AI accuracy mid-project.*
+## Test Results Log
+
+| Day | Test file | Tests | Status |
+|-----|-----------|-------|--------|
+| 1 | health.test.js | 2/2 | ✓ passing |
+| 2 | db.test.js | 13/13 | ✓ passing |
+| 3 | auth.test.js | — | not built yet |
+| 4 | rooms.test.js | — | not built yet |
+| 4 | messages.test.js | — | not built yet |
+| 5 | socket.test.js | — | not built yet |
+
+**Total passing: 15/15**
+
+---
+
+*Last updated: Day 3. Run the tree command and paste the output every time you add or move a file. This is the most important file for AI accuracy mid-project.*

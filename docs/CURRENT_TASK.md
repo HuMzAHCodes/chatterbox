@@ -9,41 +9,44 @@
 ## Current Status
 
 ```
-Day:        1
-Phase:      Week 1 — Backend
-Focus:      Project setup + Express fundamentals
-Started:    [ replace with today's date ]
-```
+## Current Status
 
+Day:        3
+Phase:      Week 1 — Backend
+Focus:      Authentication — JWT + bcrypt
+Started:    [ 6/28/26]
 ---
 
 ## What I Am Building Right Now
 
 > Replace this section every morning with 1–3 sentences describing today's goal in plain English.
 
-Setting up the Express server from scratch. Creating the folder structure, installing dependencies, writing the first routes, and confirming the server runs correctly with nodemon.
 
----
 
-## Today's Task List
+#### Tasks
+- [ ] Install: `jsonwebtoken bcryptjs express-validator`
+- [ ] Add to `.env`: `JWT_SECRET`, `JWT_EXPIRE=7d`
+- [ ] Create `src/utils/AppError.js` — custom error class extending Error
+- [ ] Create `src/utils/asyncHandler.js` — wraps async functions, passes errors to next()
+- [ ] Create `src/middleware/errorHandler.js` — global 4-param error middleware
+- [ ] Register `errorHandler` in `index.js` (must be LAST middleware)
+- [ ] Create `src/controllers/authController.js` — `register`, `login`, `getMe`
+- [ ] Create `src/routes/auth.js` — wire routes to controllers
+- [ ] Create `src/middleware/protect.js` — verify JWT, attach `req.user`
+- [ ] Add auth router to `index.js`: `app.use('/api/auth', authRouter)`
+- [ ] Helper function `generateToken(userId)` — signs and returns JWT
 
-> Copy today's tasks from PHASES.md each morning. Check them off here as you go.
-
-- [ ] Run `npm init -y` inside `backend/`
-- [ ] Install dependencies: `express dotenv morgan helmet cors express-rate-limit`
-- [ ] Install dev dependencies: `nodemon jest supertest`
-- [ ] Set `"type": "module"` in `package.json`
-- [ ] Add scripts: `start`, `dev`, `test`
-- [ ] Create full folder structure under `src/`
-- [ ] Create `index.js` — Express app + HTTP server
-- [ ] Add global middleware: morgan, helmet, cors, express.json(), rateLimit
-- [ ] Create `.env` with PORT=5000
-- [ ] Create `.env.example` and `.gitignore`
-- [ ] Create `src/routes/test.js` — GET /api/health
-- [ ] Create `src/__tests__/setup.js`
-- [ ] Test: `GET /api/health` returns 200
-- [ ] Run `npm run dev` — server starts without errors
-
+#### Automated tests (`src/__tests__/auth.test.js`)
+- [ ] `POST /api/auth/register` with valid data → 201, returns token + user (no password)
+- [ ] `POST /api/auth/register` with duplicate email → 400, error message
+- [ ] `POST /api/auth/register` with missing name → 400, validation error
+- [ ] `POST /api/auth/register` with short password → 400, validation error
+- [ ] `POST /api/auth/login` with correct credentials → 200, returns token
+- [ ] `POST /api/auth/login` with wrong password → 401, "Invalid credentials"
+- [ ] `POST /api/auth/login` with non-existent email → 401, "Invalid credentials"
+- [ ] `GET /api/auth/me` with valid token → 200, returns user (no password field)
+- [ ] `GET /api/auth/me` with no token → 401, "No token provided"
+- [ ] `GET /api/auth/me` with fake/invalid token → 401, "Token is invalid"
 ---
 
 ## Completed Today
@@ -92,11 +95,11 @@ Use only what is defined in these docs.
 
 ## Yesterday's Summary
 
-> Fill this in at the END of each day. One paragraph. What you built, what clicked, what was confusing.
-
-*(Day 1 — fill in at end of day)*
-
----
+Day 2 — Connected MongoDB Atlas using direct shard addresses (ISP blocks
+SRV DNS so mongodb+srv:// doesn't work on this machine). Created all 3
+Mongoose models: User, Room, Message. Wrote 14 passing model tests.
+Hit 8 different issues during DB connection — all documented in
+MONGODB_CONNECTION_GUIDE.md. npm test: 15/15 passing.
 
 ## Carry-Overs From Yesterday
 

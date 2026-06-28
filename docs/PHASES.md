@@ -26,23 +26,23 @@
 **Goal:** A running Express server with a clean folder structure, working routes, and environment config.
 
 #### Tasks
-- [ ] Run `npm init -y` inside `backend/`
-- [ ] Install dependencies: `express dotenv morgan helmet cors express-rate-limit`
-- [ ] Install dev dependencies: `nodemon jest supertest`
-- [ ] Set `"type": "module"` in `package.json`
-- [ ] Add scripts to `package.json`: `"start": "node index.js"`, `"dev": "nodemon index.js"`, `"test": "jest --runInBand --forceExit"`
-- [ ] Create folder structure: `src/config`, `src/controllers`, `src/middleware`, `src/models`, `src/routes`, `src/socket`, `src/utils`, `src/__tests__`
-- [ ] Create `index.js` — Express app + HTTP server on `PORT` from `.env`
-- [ ] Add global middleware: `morgan`, `helmet`, `cors`, `express.json()`, `rateLimit`
-- [ ] Create `.env` with `PORT=5000`, `NODE_ENV=development`
-- [ ] Create `.env.example` with key names but no values
-- [ ] Create `.gitignore` — add `node_modules`, `.env`
-- [ ] Create `src/routes/test.js` — `GET /api/health` returns `{ success: true, message: "Server is running" }`
-- [ ] Test the server starts with `npm run dev`
+- [x ] Run `npm init -y` inside `backend/`
+- [ x] Install dependencies: `express dotenv morgan helmet cors express-rate-limit`
+- [ x] Install dev dependencies: `nodemon jest supertest`
+- [x ] Set `"type": "module"` in `package.json`
+- [x ] Add scripts to `package.json`: `"start": "node index.js"`, `"dev": "nodemon index.js"`, `"test": "jest --runInBand --forceExit"`
+- [x ] Create folder structure: `src/config`, `src/controllers`, `src/middleware`, `src/models`, `src/routes`, `src/socket`, `src/utils`, `src/__tests__`
+- [x ] Create `index.js` — Express app + HTTP server on `PORT` from `.env`
+- [ x] Add global middleware: `morgan`, `helmet`, `cors`, `express.json()`, `rateLimit`
+- [ x] Create `.env` with `PORT=5000`, `NODE_ENV=development`
+- [x ] Create `.env.example` with key names but no values
+- [x ] Create `.gitignore` — add `node_modules`, `.env`
+- [x ] Create `src/routes/test.js` — `GET /api/health` returns `{ success: true, message: "Server is running" }`
+- [x ] Test the server starts with `npm run dev`
 
 #### Automated tests (write in `src/__tests__/`)
-- [ ] `src/__tests__/setup.js` — connect to `MONGO_URI_TEST`, disconnect after all tests
-- [ ] Test: `GET /api/health` returns 200 with `{ success: true }`
+- [x ] `src/__tests__/setup.js` — connect to `MONGO_URI_TEST`, disconnect after all tests
+- [x ] Test: `GET /api/health` returns 200 with `{ success: true }`
 
 #### Manual Postman tests
 ```
@@ -73,26 +73,26 @@ backend/
 **Goal:** MongoDB Atlas connected, all three models created, basic CRUD verified.
 
 #### Tasks
-- [ ] Create a free MongoDB Atlas account + M0 cluster
-- [ ] Create two databases: `chatterbox_dev` and `chatterbox_test`
+- [ x] Create a free MongoDB Atlas account + M0 cluster
+- [ x] Create two databases: `chatterbox_dev` and `chatterbox_test`
 - [ ] Add `MONGO_URI` and `MONGO_URI_TEST` to `.env`
-- [ ] Create `src/config/db.js` — Mongoose connect function
-- [ ] Call `connectDB()` in `index.js` before starting the server
-- [ ] Create `src/models/User.js` — full schema (see `DATABASE_SCHEMA.md`)
-- [ ] Create `src/models/Room.js` — full schema
-- [ ] Create `src/models/Message.js` — full schema
-- [ ] Write a quick manual test script to verify: create a User, find it, delete it
-- [ ] Confirm indexes are created in Atlas dashboard
+- [ x] Create `src/config/db.js` — Mongoose connect function
+- [x ] Call `connectDB()` in `index.js` before starting the server
+- [x ] Create `src/models/User.js` — full schema (see `DATABASE_SCHEMA.md`)
+- [x ] Create `src/models/Room.js` — full schema
+- [x ] Create `src/models/Message.js` — full schema
+- [ x] Write a quick manual test script to verify: create a User, find it, delete it
+- [x ] Confirm indexes are created in Atlas dashboard
 
 #### Automated tests
-- [ ] `src/__tests__/db.test.js`
-  - [ ] Can connect to test DB
-  - [ ] `User.create()` saves a document with hashed password
-  - [ ] `User.findOne({ email })` retrieves the user
-  - [ ] `user.matchPassword()` returns true for correct password, false for wrong
-  - [ ] Duplicate email throws a validation error
-  - [ ] `Room.create()` saves with correct fields
-  - [ ] `Message.create()` saves with sender + room refs
+- [x ] `src/__tests__/db.test.js`
+  - [ x] Can connect to test DB
+  - [ x] `User.create()` saves a document with hashed password
+  - [ x] `User.findOne({ email })` retrieves the user
+  - [ x] `user.matchPassword()` returns true for correct password, false for wrong
+  - [ x] Duplicate email throws a validation error
+  - [ x] `Room.create()` saves with correct fields
+  - [ x] `Message.create()` saves with sender + room refs
 
 #### Manual Postman tests
 ```

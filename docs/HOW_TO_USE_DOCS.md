@@ -26,6 +26,7 @@ These 10 docs are your project's brain. Your code changes daily — the docs mus
 | 8 | `FILE_TREE.md` | Live snapshot | Every time you add, delete, or rename a file |
 | 9 | `ENV_AND_CONFIG.md` | Static reference | When a new env variable is introduced |
 | 10 | `CONCEPTS_MAP.md` | Study guide | Never — it is static |
+| 12 | `MONGODB_CONNECTION_GUIDE.md` | Reference | Never — static troubleshooting record |
 
 ---
 
@@ -293,6 +294,7 @@ Every project has gotchas. If you don't write them down the moment you discover 
 | You want to know what to study tonight | `CONCEPTS_MAP.md` → tomorrow's section |
 | You want to check your progress | `PHASES.md` → count checked boxes |
 | Something isn't working and you changed a lot | `AI_MEMORY.md` → "Changes" section |
+| MongoDB connection fails | `MONGODB_CONNECTION_GUIDE.md` — check the issue list first |
 
 ---
 
