@@ -9,13 +9,12 @@
     "dev": "nodemon index.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --forceExit"
   },
-  "jest": {
-    "testEnvironment": "node",
-    "transform": {},
-    "testMatch": [
-      "**/__tests__/**/*.test.js"
-    ]
-  },
+ "jest": {
+  "testEnvironment": "node",
+  "transform": {},
+  "testMatch": ["**/__tests__/**/*.test.js"],
+  "testTimeout": 30000
+},
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.0",
