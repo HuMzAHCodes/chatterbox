@@ -12,6 +12,8 @@ import connectDB from './src/config/db.js';
 import testRouter from './src/routes/test.js';
 import authRouter from './src/routes/auth.js';
 import errorHandler from './src/middleware/errorHandler.js';
+import roomsRouter from './src/routes/rooms.js';
+import messagesRouter from './src/routes/messages.js';
 
 // Connect to MongoDB
 connectDB();
@@ -38,6 +40,8 @@ app.use(rateLimit({
 
 app.use('/api', testRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/rooms', roomsRouter);
+app.use('/api/messages', messagesRouter);
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 
