@@ -1,9 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-
-
-
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
@@ -12,15 +9,12 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 
 import connectDB from './src/config/db.js';
-
-
+import testRouter from './src/routes/test.js';
+import authRouter from './src/routes/auth.js';
+import errorHandler from './src/middleware/errorHandler.js';
 
 // Connect to MongoDB
 connectDB();
-
-
-// Route imports
-import testRouter from './src/routes/test.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -35,14 +29,15 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(rateLimit({
-  windowMs: 15 * 60 * 1000,  // 15 minutes
-  max: 100,                   // max 100 requests per IP per window
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { success: false, message: 'Too many requests, please try again later' },
 }));
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 
 app.use('/api', testRouter);
+app.use('/api/auth', authRouter);
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 
@@ -50,9 +45,11 @@ app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });
 
+// ── Error Handler — must be last ──────────────────────────────────────────────
+
+app.use(errorHandler);
+
 // ── Start Server ──────────────────────────────────────────────────────────────
-
-
 
 const PORT = process.env.PORT || 5000;
 
@@ -62,6 +59,4 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-
-
-export default app;  
+export default app;
