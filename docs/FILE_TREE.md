@@ -58,12 +58,12 @@ backend/
     │   ├── db.js                     [x]
     │   └── cloudinary.js             [ ] Day 6
     ├── controllers/
-    │   ├── authController.js         [ ] Day 3
+    │   ├── authController.js         [ x ] Day 3
     │   ├── roomController.js         [ ] Day 4
     │   └── messageController.js      [ ] Day 4
     ├── middleware/
-    │   ├── protect.js                [ ] Day 3
-    │   ├── errorHandler.js           [ ] Day 3
+    │   ├── protect.js                [ x ] Day 3
+    │   ├── errorHandler.js           [x  ] Day 3
     │   └── upload.js                 [ ] Day 6
     ├── models/
     │   ├── User.js                   [x]
@@ -71,7 +71,7 @@ backend/
     │   └── Message.js                [x]
     ├── routes/
     │   ├── test.js                   [x]
-    │   ├── auth.js                   [ ] Day 3
+    │   ├── auth.js                   [ x ] Day 3
     │   ├── rooms.js                  [ ] Day 4
     │   ├── messages.js               [ ] Day 4
     │   └── upload.js                 [ ] Day 6
@@ -81,13 +81,13 @@ backend/
     │       ├── messageHandler.js     [ ] Day 5
     │       └── roomHandler.js        [ ] Day 5
     ├── utils/
-    │   ├── AppError.js               [ ] Day 3
-    │   └── asyncHandler.js           [ ] Day 3
+    │   ├── AppError.js               [ x ] Day 3
+    │   └── asyncHandler.js           [ x ] Day 3
     └── __tests__/
         ├── setup.js                  [x]
         ├── health.test.js            [x] ← added Day 1 (not in original plan)
         ├── db.test.js                [x]
-        ├── auth.test.js              [ ] Day 3
+        ├── auth.test.js              [ x ] Day 3
         ├── rooms.test.js             [ ] Day 4
         ├── messages.test.js          [ ] Day 4
         └── socket.test.js            [ ] Day 5

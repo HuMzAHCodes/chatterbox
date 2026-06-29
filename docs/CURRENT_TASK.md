@@ -9,58 +9,42 @@
 ## Current Status
 
 ```
-## Current Status
-
-Day:        3
+Day:        4
 Phase:      Week 1 — Backend
-Focus:      Authentication — JWT + bcrypt
-Started:    [ 6/28/26]
+Focus:      REST API — rooms & messages
+Started:    [ fill in today's date ]
+```
+
 ---
 
 ## What I Am Building Right Now
 
-> Replace this section every morning with 1–3 sentences describing today's goal in plain English.
+Building the rooms and messages REST API. Creating controllers, routes, and input validation for creating rooms, listing rooms, getting a single room, and fetching paginated message history.
 
+---
 
+## Today's Task List
 
-#### Tasks
-- [ ] Install: `jsonwebtoken bcryptjs express-validator`
-- [ ] Add to `.env`: `JWT_SECRET`, `JWT_EXPIRE=7d`
-- [ ] Create `src/utils/AppError.js` — custom error class extending Error
-- [ ] Create `src/utils/asyncHandler.js` — wraps async functions, passes errors to next()
-- [ ] Create `src/middleware/errorHandler.js` — global 4-param error middleware
-- [ ] Register `errorHandler` in `index.js` (must be LAST middleware)
-- [ ] Create `src/controllers/authController.js` — `register`, `login`, `getMe`
-- [ ] Create `src/routes/auth.js` — wire routes to controllers
-- [ ] Create `src/middleware/protect.js` — verify JWT, attach `req.user`
-- [ ] Add auth router to `index.js`: `app.use('/api/auth', authRouter)`
-- [ ] Helper function `generateToken(userId)` — signs and returns JWT
+- [ ] Install: `express-validator`
+- [ ] Create `src/controllers/roomController.js` — `createRoom`, `getRooms`, `getRoomById`
+- [ ] Create `src/routes/rooms.js` — all routes protected with `protect`
+- [ ] Create `src/controllers/messageController.js` — `getMessages` (paginated)
+- [ ] Create `src/routes/messages.js` — protected
+- [ ] Add validation middleware inline in route files using `express-validator`
+- [ ] Add room + message routers to `index.js`
+- [ ] Ensure `createRoom` adds creator to `participants` automatically
+- [ ] Ensure `getRoomById` returns 403 if user is not in `participants`
+- [ ] Ensure `getMessages` returns 403 if user is not in room's `participants`
 
-#### Automated tests (`src/__tests__/auth.test.js`)
-- [ ] `POST /api/auth/register` with valid data → 201, returns token + user (no password)
-- [ ] `POST /api/auth/register` with duplicate email → 400, error message
-- [ ] `POST /api/auth/register` with missing name → 400, validation error
-- [ ] `POST /api/auth/register` with short password → 400, validation error
-- [ ] `POST /api/auth/login` with correct credentials → 200, returns token
-- [ ] `POST /api/auth/login` with wrong password → 401, "Invalid credentials"
-- [ ] `POST /api/auth/login` with non-existent email → 401, "Invalid credentials"
-- [ ] `GET /api/auth/me` with valid token → 200, returns user (no password field)
-- [ ] `GET /api/auth/me` with no token → 401, "No token provided"
-- [ ] `GET /api/auth/me` with fake/invalid token → 401, "Token is invalid"
 ---
 
 ## Completed Today
-
-> Move tasks here once done. Keep a note of anything surprising you learned.
 
 *(nothing yet — update as you go)*
 
 ---
 
 ## Blocked / Issues
-
-> If something is not working, describe it here before asking an AI for help.
-> Format: what you tried, what happened, what you expected.
 
 *(none)*
 
@@ -74,38 +58,58 @@ Started:    [ 6/28/26]
 I am building a real-time chat app (ChatterBox) using Express, MongoDB, Socket.io, and Next.js.
 
 Current state:
-- Day: 1
-- Phase: Project setup
-- What I just finished: [ fill in ]
+- Day: 4
+- Phase: Week 1 — Backend
+- What I just finished: Day 3 complete — JWT auth, protect middleware,
+  errorHandler, asyncHandler, AppError all working. 28/28 tests passing.
 - What I need help with: [ fill in ]
 
 Please read these docs before writing any code:
-1. PROJECT_CONTEXT.md    — stack, standards, decisions
-2. ARCHITECTURE.md       — folder structure, request flow
-3. DATABASE_SCHEMA.md    — all models and relationships
-4. API_REFERENCE.md      — all endpoints and socket events
-5. FILE_TREE.md          — my ACTUAL current folder structure
-6. ENV_AND_CONFIG.md     — my actual env variable names
+1. PROJECT_CONTEXT.md        — stack, standards, decisions
+2. ARCHITECTURE.md           — folder structure, request flow
+3. DATABASE_SCHEMA.md        — all models and relationships
+4. API_REFERENCE.md          — all endpoints and socket events
+5. FILE_TREE.md              — my ACTUAL current folder structure
+6. ENV_AND_CONFIG.md         — my actual env variable names
+7. AI_MEMORY.md              — decisions made, gotchas, hard rules
+8. MONGODB_CONNECTION_GUIDE.md — ISP blocks SRV DNS, use direct shard URIs
 
 Do not invent file names, variable names, or field names.
 Use only what is defined in these docs.
+Never use mongodb+srv:// — always use direct shard connection string.
 ```
 
 ---
 
 ## Yesterday's Summary
 
-Day 2 — Connected MongoDB Atlas using direct shard addresses (ISP blocks
-SRV DNS so mongodb+srv:// doesn't work on this machine). Created all 3
-Mongoose models: User, Room, Message. Wrote 14 passing model tests.
-Hit 8 different issues during DB connection — all documented in
-MONGODB_CONNECTION_GUIDE.md. npm test: 15/15 passing.
+Day 3 — Built full JWT authentication. Created AppError, asyncHandler,
+errorHandler, protect middleware, authController, and auth routes.
+All 3 manual Postman tests passed (register, login, getMe).
+Automated tests: 28/28 passing across health, db, and auth test suites.
+No blockers. Clean day.
+
+---
 
 ## Carry-Overs From Yesterday
 
-> Tasks from yesterday that weren't finished. Move them to Today's Task List.
+*(none)*
 
-*(none — Day 1)*
+---
+
+## Completed Days Summary
+
+| Day | Focus | Tests | Status |
+|-----|-------|-------|--------|
+| 1 | Express server setup | 2/2 | ✓ done |
+| 2 | MongoDB + Mongoose models | 13/13 | ✓ done |
+| 3 | JWT auth + protect middleware | 13/13 | ✓ done |
+| 4 | REST API — rooms & messages | — | in progress |
+| 5 | Socket.io real-time | — | not started |
+| 6 | Security + file uploads | — | not started |
+| 7 | Frontend + deployment | — | not started |
+
+**Total tests passing: 28/28**
 
 ---
 

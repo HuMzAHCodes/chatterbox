@@ -128,29 +128,29 @@ src/
 **Goal:** Working register/login endpoints, JWT issued on success, `protect` middleware guards routes.
 
 #### Tasks
-- [ ] Install: `jsonwebtoken bcryptjs express-validator`
-- [ ] Add to `.env`: `JWT_SECRET`, `JWT_EXPIRE=7d`
-- [ ] Create `src/utils/AppError.js` — custom error class extending Error
-- [ ] Create `src/utils/asyncHandler.js` — wraps async functions, passes errors to next()
-- [ ] Create `src/middleware/errorHandler.js` — global 4-param error middleware
-- [ ] Register `errorHandler` in `index.js` (must be LAST middleware)
-- [ ] Create `src/controllers/authController.js` — `register`, `login`, `getMe`
-- [ ] Create `src/routes/auth.js` — wire routes to controllers
-- [ ] Create `src/middleware/protect.js` — verify JWT, attach `req.user`
-- [ ] Add auth router to `index.js`: `app.use('/api/auth', authRouter)`
-- [ ] Helper function `generateToken(userId)` — signs and returns JWT
+- [ x ] Install: `jsonwebtoken bcryptjs express-validator`
+- [ x ] Add to `.env`: `JWT_SECRET`, `JWT_EXPIRE=7d`
+- [ x ] Create `src/utils/AppError.js` — custom error class extending Error
+- [ x ] Create `src/utils/asyncHandler.js` — wraps async functions, passes errors to next()
+- [ x ] Create `src/middleware/errorHandler.js` — global 4-param error middleware
+- [ x ] Register `errorHandler` in `index.js` (must be LAST middleware)
+- [x  ] Create `src/controllers/authController.js` — `register`, `login`, `getMe`
+- [ x ] Create `src/routes/auth.js` — wire routes to controllers
+- [ x ] Create `src/middleware/protect.js` — verify JWT, attach `req.user`
+- [ x ] Add auth router to `index.js`: `app.use('/api/auth', authRouter)`
+- [ x ] Helper function `generateToken(userId)` — signs and returns JWT
 
 #### Automated tests (`src/__tests__/auth.test.js`)
-- [ ] `POST /api/auth/register` with valid data → 201, returns token + user (no password)
-- [ ] `POST /api/auth/register` with duplicate email → 400, error message
-- [ ] `POST /api/auth/register` with missing name → 400, validation error
-- [ ] `POST /api/auth/register` with short password → 400, validation error
-- [ ] `POST /api/auth/login` with correct credentials → 200, returns token
-- [ ] `POST /api/auth/login` with wrong password → 401, "Invalid credentials"
-- [ ] `POST /api/auth/login` with non-existent email → 401, "Invalid credentials"
-- [ ] `GET /api/auth/me` with valid token → 200, returns user (no password field)
-- [ ] `GET /api/auth/me` with no token → 401, "No token provided"
-- [ ] `GET /api/auth/me` with fake/invalid token → 401, "Token is invalid"
+- [x  ] `POST /api/auth/register` with valid data → 201, returns token + user (no password)
+- [ x ] `POST /api/auth/register` with duplicate email → 400, error message
+- [ x ] `POST /api/auth/register` with missing name → 400, validation error
+- [ x ] `POST /api/auth/register` with short password → 400, validation error
+- [ x ] `POST /api/auth/login` with correct credentials → 200, returns token
+- [ x ] `POST /api/auth/login` with wrong password → 401, "Invalid credentials"
+- [ x ] `POST /api/auth/login` with non-existent email → 401, "Invalid credentials"
+- [ x ] `GET /api/auth/me` with valid token → 200, returns user (no password field)
+- [ x ] `GET /api/auth/me` with no token → 401, "No token provided"
+- [ x ] `GET /api/auth/me` with fake/invalid token → 401, "Token is invalid"
 
 #### Manual Postman tests
 ```

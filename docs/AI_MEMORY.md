@@ -82,6 +82,23 @@ res.status(err.statusCode).json({ success: false, message: err.message })
 
 ---
 
+### [Day 2] Direct shard connection string instead of mongodb+srv
+
+**Decision:** This project uses direct MongoDB shard addresses instead
+of the standard `mongodb+srv://` format because the ISP blocks SRV DNS lookups.
+
+**Shard hosts:**
+- `ac-wmvhmmv-shard-00-00.lpcvjp7.mongodb.net:27017`
+- `ac-wmvhmmv-shard-00-01.lpcvjp7.mongodb.net:27017`
+- `ac-wmvhmmv-shard-00-02.lpcvjp7.mongodb.net:27017`
+
+**ReplicaSet name:** `atlas-rtado6-shard-0`
+
+**Impact on AI:** Never generate `mongodb+srv://` URIs for this project.
+Always use the direct format. Full details in `MONGODB_CONNECTION_GUIDE.md`.
+
+---
+
 ### [Day 2] Messages created via Socket.io, fetched via REST
 
 **Decision:** Message creation happens exclusively through the `send-message` Socket.io event (not a POST REST endpoint). Message retrieval uses `GET /api/messages/:roomId`.
@@ -96,9 +113,9 @@ res.status(err.statusCode).json({ success: false, message: err.message })
 
 **Decision:** Automated tests run against `MONGO_URI_TEST` (a completely separate Atlas database), never against `MONGO_URI` (the dev database).
 
-**How:** `src/__tests__/setup.js` reads `process.env.MONGO_URI_TEST` to connect. Jest sets `NODE_ENV=test`.
+**How:** Each test file connects to `MONGO_URI_TEST` in its own `beforeAll`. Jest sets `NODE_ENV=test`.
 
-**Impact on AI:** When writing test files, always use the test DB connection from `setup.js`. Never connect to the dev DB in tests.
+**Impact on AI:** When writing test files, always connect to `MONGO_URI_TEST`. Never connect to the dev DB in tests.
 
 ---
 
@@ -166,9 +183,101 @@ io.use((socket, next) => {
 
 ---
 
-### [Day 2] Mongoose does not throw on duplicate key by default in all cases
+### [Day 1] Jest picks up all .js files as test suites by default
 
-**Gotcha:** A duplicate `email` error from MongoDB comes back as error code `11000`, not a Mongoose ValidationError. Handle it specifically in `errorHandler.js`:
+**Gotcha:** Jest scanned `src/routes/test.js` and `src/__tests__/setup.js`
+as test suites because they matched its default pattern. Fixed by
+adding `"testMatch": ["**/__tests__/**/*.test.js"]` to jest config
+in `package.json`. Always scope testMatch when using Jest.
+
+---
+
+### [Day 1] Server must not call listen() during tests
+
+**Gotcha:** When `npm test` runs, it imports `app` from `index.js` which
+triggered `server.listen()` — port 5000 was already in use from
+`npm run dev`. Fixed by wrapping listen() in:
+
+```javascript
+if (process.env.NODE_ENV !== 'test') { server.listen(...) }
+```
+
+Always export `app` separately from the listen call.
+
+---
+
+### [Day 1] health.test.js added — not in original plan
+
+**Gotcha:** Added `src/__tests__/health.test.js` to test the health route.
+Was missing from `ARCHITECTURE.md` and `FILE_TREE.md` — both updated.
+
+---
+
+### [Day 2] ISP blocks SRV DNS — never use mongodb+srv:// on this machine
+
+**Gotcha:** Pakistani ISP blocks SRV DNS lookups. The standard
+`mongodb+srv://` connection string format relies on SRV DNS to
+discover cluster shards — it will always fail with `ECONNREFUSED`
+on this machine regardless of DNS settings or Node version.
+
+Fix: Always use direct shard connection string format:
+```
+mongodb://user:pass@shard-00-00:27017,shard-00-01:27017,shard-00-02:27017/dbname?ssl=true&replicaSet=REPLICA_SET_NAME&authSource=admin
+```
+
+To get shard hostnames: `nslookup -type=SRV _mongodb._tcp.CLUSTER_HOST 8.8.8.8`
+To get replicaSet name: `nslookup -type=TXT _mongodb._tcp.CLUSTER_HOST 8.8.8.8`
+
+Full details: see `MONGODB_CONNECTION_GUIDE.md`
+
+---
+
+### [Day 2] Wrong replicaSet name causes ReplicaSetNoPrimary
+
+**Gotcha:** If replicaSet name is wrong in the connection string,
+Mongoose connects to the shards but finds zero servers
+(`servers: Map(0) {}`) and times out. The replicaSet name is NOT
+derived from the cluster URL — it must be fetched via TXT lookup.
+
+This cluster's replicaSet name: `atlas-rtado6-shard-0`
+Never guess this value.
+
+---
+
+### [Day 2] Always update BOTH MONGO_URI and MONGO_URI_TEST together
+
+**Gotcha:** When changing Atlas password or connection string format,
+both `MONGO_URI` and `MONGO_URI_TEST` must be updated at the same time.
+Updating only one causes auth failures in tests that are very
+hard to trace back to a stale URI.
+
+---
+
+### [Day 2] Atlas password must have no special characters
+
+**Gotcha:** Special characters in Atlas password (`@`, `#`, `$`, `!`, `%`)
+break the URI string. Always use alphanumeric passwords only.
+Example of safe password: `Chatterbox2024`
+
+---
+
+### [Day 2] dotenv.config() must be first — before any imports in index.js
+
+**Gotcha:** ES Module imports are hoisted. If `connectDB` is imported
+before `dotenv.config()` runs, `process.env.MONGO_URI` is undefined
+when `db.js` reads it. Always put dotenv first:
+
+```javascript
+import dotenv from 'dotenv';
+dotenv.config();
+// ALL other imports below this line
+```
+
+---
+
+### [Day 2] Mongoose does not throw on duplicate key via ValidationError
+
+**Gotcha:** A duplicate `email` error from MongoDB comes back as error code `11000`, not a Mongoose `ValidationError`. Handle it specifically in `errorHandler.js`:
 
 ```javascript
 if (err.code === 11000) {
@@ -199,16 +308,17 @@ const user = await User.findOne({ email });
 
 ---
 
-### [Day 3] errorHandler must be registered LAST in index.js
+### [Day 3] errorHandler must be registered AFTER the 404 handler and LAST in index.js
 
-**Gotcha:** Express error-handling middleware (4 parameters: `err, req, res, next`) must be registered after all routes. If registered before, it will never catch route errors.
+**Gotcha:** Express error-handling middleware (4 parameters: `err, req, res, next`) must be registered after all routes AND after the 404 handler. If placed before the 404 handler, unmatched routes never reach 404 and fall through to errorHandler instead.
 
 ```javascript
 // CORRECT order in index.js
 app.use('/api/auth', authRouter);
 app.use('/api/rooms', roomsRouter);
 // ... all other routes
-app.use(errorHandler); // ← LAST
+app.use((req, res) => { res.status(404)... });  // 404 handler
+app.use(errorHandler);                           // ← LAST, always
 ```
 
 ---
@@ -260,6 +370,8 @@ These are non-negotiable for this codebase. Any AI tool must follow them.
 | 10 | Socket auth via `handshake.auth.token` — never query params |
 | 11 | Frontend: one component = one folder, one file = one responsibility |
 | 12 | Tailwind classes only — no inline styles, no separate CSS files |
+| 13 | Never use `mongodb+srv://` on this machine — always direct shard URIs |
+| 14 | Always update MONGO_URI and MONGO_URI_TEST together |
 
 ---
 
@@ -268,7 +380,13 @@ These are non-negotiable for this codebase. Any AI tool must follow them.
 > Log here whenever you abandon an approach and replace it with something else.
 > Format: what you had → what you changed to → why.
 
-*(none yet — add entries here as the project evolves)*
+### [Day 2] Moved DB connection logic from setup.js into each test file
+
+**Changed:** `setup.js` had `beforeAll`/`afterAll`/`afterEach` → moved into each test file individually.
+
+**Reason:** `setup.js` was not being auto-run before `db.test.js` in Jest's ESM mode. Moving connection logic directly into each test file guarantees it runs before that file's tests.
+
+**Result:** `setup.js` now only contains `jest.setTimeout(30000)`.
 
 ---
 
@@ -281,4 +399,4 @@ These are non-negotiable for this codebase. Any AI tool must follow them.
 
 ---
 
-*Last updated: Day 1. Add entries immediately when you discover a gotcha or make a decision — memory fades fast. A note written now saves 2 hours of debugging later.*
+*Last updated: Day 3. Add entries immediately when you discover a gotcha or make a decision — memory fades fast. A note written now saves 2 hours of debugging later.*
