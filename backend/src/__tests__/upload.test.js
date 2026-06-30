@@ -13,7 +13,9 @@ const __dirname = path.dirname(__filename);
 let token;
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGO_URI_TEST);
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(process.env.MONGO_URI_TEST);
+  }
 }, 30000);
 
 beforeEach(async () => {
@@ -32,7 +34,6 @@ afterEach(async () => {
 
 afterAll(async () => {
   await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
 }, 30000);
 
 describe('POST /api/upload/avatar', () => {
@@ -59,8 +60,7 @@ describe('POST /api/upload/avatar', () => {
 
   it('should return 401 with no token', async () => {
     const res = await request(app)
-      .post('/api/upload/avatar')
-      .attach('avatar', path.join(__dirname, 'fixtures', 'test-image.jpg'));
+      .post('/api/upload/avatar');
 
     expect(res.statusCode).toBe(401);
   }, 30000);
@@ -75,159 +75,49 @@ describe('POST /api/upload/avatar', () => {
 });
 
 
-/*
-===============================================================================
-UPLOAD.INTEGRATION.TEST.JS - FUNCTIONALITY SUMMARY
-===============================================================================
 
-Purpose
--------
-This file contains integration tests for the avatar upload API.
 
-Its purpose is to verify that the complete upload workflow functions correctly,
-including:
+/* ==========================================================================
 
-• User authentication
-• Image upload
-• Multer middleware
-• Cloudinary integration
-• MongoDB updates
-• API responses
+FILE FUNCTIONALITY
+==================
 
-Unlike unit tests, these tests verify that all components involved in the
-upload process work together as expected.
+This test file verifies the Avatar Upload API endpoint using Supertest,
+a MongoDB test database, and test fixture files.
 
-===============================================================================
-TEST ENVIRONMENT SETUP
-===============================================================================
+1. DATABASE SETUP
+   - Connects to the MongoDB test database before running tests.
+   - Uses the MONGO_URI_TEST environment variable.
 
-beforeAll()
------------
-Runs once before all tests.
+2. TEST DATA SETUP
+   - Registers a new user before each test.
+   - Retrieves a valid JWT token for authenticated upload requests.
+   - Determines the current directory path to access test fixture files.
 
-Responsibilities:
+3. DATABASE CLEANUP
+   - Clears all collections after each test.
+   - Drops the test database after all tests complete.
 
-• Connect to the test MongoDB database.
+4. AVATAR UPLOAD ENDPOINT TESTS (POST /api/upload/avatar)
+   - Successfully uploads a valid image file.
+   - Verifies the uploaded image is stored on Cloudinary.
+   - Confirms the API returns a valid Cloudinary image URL.
+   - Rejects files that are not valid image formats.
+   - Returns 400 when no file is provided.
+   - Returns 401 when the request is unauthenticated.
 
--------------------------------------------------------------------------------
+5. TEST FIXTURES
+   - test-image.jpg
+       Used to verify successful image uploads.
+   - test-file.txt
+       Used to verify file type validation by attempting to upload a
+       non-image file.
 
-beforeEach()
-------------
-Runs before every individual test.
+Overall Purpose
+---------------
+This file performs integration testing for the avatar upload API,
+ensuring file validation, authentication, Cloudinary integration, and
+API responses function correctly for both successful and error
+scenarios.
 
-Responsibilities:
-
-• Register a new test user.
-• Retrieve the JWT returned from the registration endpoint.
-• Store the token for authenticated upload requests.
-
-Creating a new user for every test ensures that each test runs independently.
-
--------------------------------------------------------------------------------
-
-afterEach()
------------
-Runs after every test.
-
-Responsibilities:
-
-• Remove all documents from every MongoDB collection.
-
-This guarantees that data created during one test does not affect any other
-test.
-
--------------------------------------------------------------------------------
-
-afterAll()
-----------
-Runs once after the entire test suite completes.
-
-Responsibilities:
-
-• Drop the test database.
-• Close the MongoDB connection.
-
-This cleans up all testing resources.
-
-===============================================================================
-TEST SUITE
-===============================================================================
-
-POST /api/upload/avatar
-------------------------
-
-This suite tests the avatar upload endpoint under different scenarios.
-
-Test Case 1:
--------------
-Uploads a valid image.
-
-Verifies that:
-
-✓ The request succeeds.
-✓ HTTP status code is 200.
-✓ Success is true.
-✓ A valid Cloudinary URL is returned.
-
--------------------------------------------------------------------------------
-
-Test Case 2:
--------------
-Uploads a non-image file.
-
-Verifies that:
-
-✓ The request is rejected.
-✓ HTTP status code is 400.
-✓ Success is false.
-
-This confirms that the upload middleware correctly validates file types.
-
--------------------------------------------------------------------------------
-
-Test Case 3:
--------------
-Attempts an upload without authentication.
-
-Verifies that:
-
-✓ HTTP status code is 401 (Unauthorized).
-
-This confirms that only authenticated users can upload avatars.
-
--------------------------------------------------------------------------------
-
-Test Case 4:
--------------
-Sends an authenticated request without attaching a file.
-
-Verifies that:
-
-✓ HTTP status code is 400.
-
-This confirms that the API requires an image file before processing the
-request.
-
-===============================================================================
-OVERALL RESPONSIBILITY
-===============================================================================
-
-This file performs end-to-end integration testing for the avatar upload
-feature.
-
-It verifies that:
-
-✓ Authentication protects the upload endpoint.
-✓ Valid image files are accepted.
-✓ Invalid file types are rejected.
-✓ Missing authentication is handled correctly.
-✓ Missing uploads produce appropriate errors.
-✓ Images are successfully uploaded to Cloudinary.
-✓ The API returns the expected response after a successful upload.
-
-By testing the complete request flow—from the client request through
-authentication, upload middleware, Cloudinary, database interaction, and API
-response—this file helps ensure that the avatar upload feature works reliably
-in a production-like environment.
-===============================================================================
-*/
+=========================================================================== */

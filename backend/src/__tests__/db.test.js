@@ -7,7 +7,9 @@ import Message from '../models/Message.js';
 dotenv.config();
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGO_URI_TEST);
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(process.env.MONGO_URI_TEST);
+  }
 }, 30000);
 
 afterEach(async () => {
@@ -19,7 +21,6 @@ afterEach(async () => {
 
 afterAll(async () => {
   await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
 }, 30000);
 
 describe('Database Models', () => {
@@ -153,3 +154,53 @@ describe('Database Models', () => {
     }, 30000);
   });
 });
+
+
+
+/* ==========================================================================
+
+FILE FUNCTIONALITY
+==================
+
+This test file verifies that all Mongoose database models work correctly
+against the test MongoDB database.
+
+1. DATABASE SETUP
+   - Connects to the test database before all tests.
+   - Uses MONGO_URI_TEST from the .env file.
+
+2. DATABASE CLEANUP
+   - Deletes all documents from every collection after each test so every
+     test starts with a fresh database.
+   - Drops the entire test database after all tests finish.
+
+3. USER MODEL TESTS
+   - Creates new users successfully.
+   - Verifies passwords are automatically hashed before saving.
+   - Confirms users can be found by email.
+   - Tests matchPassword() with both correct and incorrect passwords.
+   - Ensures duplicate email addresses are rejected.
+   - Confirms the password field is hidden by default (select: false).
+
+4. ROOM MODEL TESTS
+   - Creates chat rooms successfully.
+   - Validates required fields (room name).
+   - Confirms rooms can be queried by participant.
+   - Checks default values such as:
+       • isPrivate = false
+       • lastMessage = null
+
+5. MESSAGE MODEL TESTS
+   - Creates chat messages successfully.
+   - Verifies the default message type ("text").
+   - Tests Mongoose population of the sender field.
+   - Confirms validation errors for missing message content.
+   - Verifies messages can be sorted by creation time.
+
+Overall Purpose
+---------------
+This file ensures the User, Room, and Message models behave correctly,
+including validation, middleware, instance methods, relationships,
+default values, and database queries.
+
+=========================================================================== */

@@ -7,7 +7,9 @@ import User from '../models/User.js';
 dotenv.config();
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGO_URI_TEST);
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(process.env.MONGO_URI_TEST);
+  }
 }, 30000);
 
 afterEach(async () => {
@@ -19,10 +21,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
 }, 30000);
-
-// ── REGISTER ─────────────────────────────────────────────────────────────────
 
 describe('POST /api/auth/register', () => {
   it('should register a new user and return token', async () => {
@@ -77,8 +76,6 @@ describe('POST /api/auth/register', () => {
   }, 30000);
 });
 
-// ── LOGIN ─────────────────────────────────────────────────────────────────────
-
 describe('POST /api/auth/login', () => {
   beforeEach(async () => {
     await User.create({ name: 'Ali', email: 'ali@test.com', password: 'secret123' });
@@ -123,8 +120,6 @@ describe('POST /api/auth/login', () => {
   }, 30000);
 });
 
-// ── GET ME ────────────────────────────────────────────────────────────────────
-
 describe('GET /api/auth/me', () => {
   let token;
 
@@ -148,7 +143,6 @@ describe('GET /api/auth/me', () => {
 
   it('should return 401 with no token', async () => {
     const res = await request(app).get('/api/auth/me');
-
     expect(res.statusCode).toBe(401);
     expect(res.body.message).toBe('No token provided');
   }, 30000);
@@ -171,3 +165,55 @@ describe('GET /api/auth/me', () => {
     expect(res.body.success).toBe(false);
   }, 30000);
 });
+
+
+
+
+/* ==========================================================================
+
+FILE FUNCTIONALITY
+==================
+
+This test file verifies the Authentication API endpoints using Supertest
+and a dedicated MongoDB test database.
+
+1. DATABASE SETUP
+   - Connects to the test database before all tests.
+   - Uses the MONGO_URI_TEST environment variable.
+
+2. DATABASE CLEANUP
+   - Clears all collections after each test to ensure test isolation.
+   - Drops the test database after all tests complete.
+
+3. REGISTER ENDPOINT TESTS (POST /api/auth/register)
+   - Registers a new user successfully.
+   - Returns a JWT authentication token after registration.
+   - Ensures the password is not included in the response.
+   - Rejects duplicate email addresses.
+   - Validates required fields (name, email, password).
+   - Validates email format.
+
+4. LOGIN ENDPOINT TESTS (POST /api/auth/login)
+   - Authenticates users with valid credentials.
+   - Returns a JWT token upon successful login.
+   - Rejects incorrect passwords.
+   - Rejects non-existent email addresses.
+   - Validates required login fields.
+   - Ensures the password is never returned in the response.
+
+5. CURRENT USER ENDPOINT TESTS (GET /api/auth/me)
+   - Retrieves the authenticated user's information.
+   - Verifies JWT authentication middleware.
+   - Rejects requests without an authentication token.
+   - Rejects invalid JWT tokens.
+   - Rejects malformed Authorization headers.
+   - Ensures sensitive fields (password) are not exposed.
+
+Overall Purpose
+---------------
+This file performs integration testing for the authentication system,
+verifying that user registration, login, JWT authentication, input
+validation, authorization middleware, and API responses all function
+correctly.
+
+=========================================================================== */
