@@ -14,12 +14,14 @@ import authRouter from './src/routes/auth.js';
 import errorHandler from './src/middleware/errorHandler.js';
 import roomsRouter from './src/routes/rooms.js';
 import messagesRouter from './src/routes/messages.js';
+import initSocket from './src/socket/index.js';
 
 // Connect to MongoDB
 connectDB();
 
 const app = express();
 const server = http.createServer(app);
+const io = initSocket(server);
 
 // ── Global Middleware ─────────────────────────────────────────────────────────
 
